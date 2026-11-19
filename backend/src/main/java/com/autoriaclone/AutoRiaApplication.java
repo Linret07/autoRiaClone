@@ -20,7 +20,7 @@ public class AutoRiaApplication {
 
   @org.springframework.context.annotation.Bean WebMvcConfigurer files(@org.springframework.beans.factory.annotation.Value("${app.upload-dir:uploads}") String dir) {
     Path root = Paths.get(dir).toAbsolutePath().normalize(); try { Files.createDirectories(root); } catch (IOException e) { throw new IllegalStateException(e); }
-    return new WebMvcConfigurer() { public void addResourceHandlers(ResourceHandlerRegistry r) { r.addResourceHandler("/uploads/**").addResourceLocations(root.toUri().toString()); } };
+    return new WebMvcConfigurer() { public void addResourceHandlers(ResourceHandlerRegistry r) { r.addResourceHandler("/uploads/**").addResourceLocations(root.toUri().toString()); } public void addCorsMappings(CorsRegistry r) { r.addMapping("/**").allowedOrigins("http://localhost:5500","http://127.0.0.1:5500").allowedMethods("GET","POST","PUT","DELETE","OPTIONS").allowedHeaders("*"); } };
   }
 
   static class User { String username, password, role, account; User(String u,String p,String r,String a){username=u;password=p;role=r;account=a;} }
