@@ -1,0 +1,5 @@
+backend/target/
+uploads/*
+!uploads/.gitkeep
+.idea/
+*.log
