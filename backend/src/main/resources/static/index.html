@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>AutoRia Clone</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <h1>AutoRia Clone</h1>
+    <p>Платформа продажу автомобілів</p>
+</header>
+
+<main>
+    <section class="panel">
+        <h2>Оголошення</h2>
+        <button onclick="loadAds()">Оновити</button>
+        <div id="ads"></div>
+    </section>
+
+    <section class="panel">
+        <h2>Увійти</h2>
+        <input id="email" type="email" placeholder="Email">
+        <input id="password" type="password" placeholder="Пароль">
+        <button onclick="login()">Увійти</button>
+        <p id="session"></p>
+    </section>
+
+    <section class="panel">
+        <h2>Нове оголошення</h2>
+        <select id="brandId" onchange="updateModels()"></select>
+        <select id="modelId"></select>
+        <input id="year" type="number" value="2021" placeholder="Рік випуску">
+        <input id="price" type="number" placeholder="Ціна">
+        <select id="currency">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="UAH">UAH</option>
+        </select>
+        <select id="region">
+            <option value="KYIV">Київ</option>
+            <option value="LVIV">Львів</option>
+            <option value="ODESA">Одеса</option>
+            <option value="KHARKIV">Харків</option>
+            <option value="DNIPRO">Дніпро</option>
+        </select>
+        <textarea id="description" placeholder="Опис автомобіля"></textarea>
+        <input id="image" type="file" accept="image/jpeg,image/png,image/webp">
+        <button onclick="createAd()">Опублікувати</button>
+        <p id="result"></p>
+    </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
