@@ -1,11 +1,13 @@
 package com.autoriaclone.service;
 
+import com.autoriaclone.config.FeatureFlagsProperties;
 import com.autoriaclone.dto.AdStatsResponse;
 import com.autoriaclone.entity.*;
 import com.autoriaclone.entity.enums.*;
 import com.autoriaclone.repository.*;
+import com.autoriaclone.service.storage.FileStorageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,11 +17,12 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.file.*;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AdvertisementService {
@@ -30,9 +33,8 @@ public class AdvertisementService {
     private final CurrencyService currencyService;
     private final ProfanityFilterService profanityFilter;
     private final EmailService emailService;
-
-    @Value("${app.upload-dir:uploads}")
-    private String uploadDir;
+    private final FileStorageService fileStorageService;
+    private final FeatureFlagsProperties features;
 
     public List<Advertisement> getAllActive() {
         return adRepository.findByStatus(AdStatus.ACTIVE);
@@ -79,7 +81,8 @@ public class AdvertisementService {
         currencyService.calculatePrices(ad);
         applyModeration(ad);
         if (image != null && !image.isEmpty()) {
-            ad.setImageUrl(saveImage(image));
+            validateImageExtension(image);
+            ad.setImageUrl(fileStorageService.save(image));
         }
         return adRepository.save(ad);
     }
@@ -91,9 +94,10 @@ public class AdvertisementService {
         if (!ad.getSeller().getId().equals(seller.getId()) && seller.getRole().getName() != RoleName.ADMIN) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Ви можете редагувати лише власні оголошення");
         }
-        if (ad.getEditAttempts() >= 3) {
+        int maxAttempts = features.getProfanityFilter().getMaxEditAttempts();
+        if (ad.getEditAttempts() >= maxAttempts) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "Вичерпано ліміт редагувань (3 спроби). Оголошення передано менеджеру.");
+                    "Вичерпано ліміт редагувань (" + maxAttempts + " спроби). Оголошення передано менеджеру.");
         }
 
         ad.setDescription(description);
@@ -104,14 +108,29 @@ public class AdvertisementService {
         currencyService.calculatePrices(ad);
         applyModeration(ad);
         if (image != null && !image.isEmpty()) {
-            ad.setImageUrl(saveImage(image));
+            validateImageExtension(image);
+            ad.setImageUrl(fileStorageService.save(image));
         }
         return adRepository.save(ad);
     }
 
+    private void validateImageExtension(MultipartFile file) {
+        String original = file.getOriginalFilename();
+        String ext = (original != null && original.contains("."))
+                ? original.substring(original.lastIndexOf('.')).toLowerCase() : "";
+        if (!List.of(".jpg", ".jpeg", ".png", ".webp").contains(ext)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Підтримуються лише jpg, jpeg, png, webp");
+        }
+    }
+
     private void applyModeration(Advertisement ad) {
+        if (!features.getProfanityFilter().isEnabled()) {
+            ad.setStatus(AdStatus.ACTIVE);
+            return;
+        }
+        int maxAttempts = features.getProfanityFilter().getMaxEditAttempts();
         if (profanityFilter.containsProfanity(ad.getDescription())) {
-            if (ad.getEditAttempts() >= 3) {
+            if (ad.getEditAttempts() >= maxAttempts) {
                 ad.setStatus(AdStatus.INACTIVE_REVIEW);
                 emailService.notifyManagerAboutFailedAd(ad);
             } else {
@@ -123,7 +142,11 @@ public class AdvertisementService {
     }
 
     public AdStatsResponse getStatistics(User user, Long adId) {
-        if (user.getAccountType() != AccountType.PREMIUM) {
+        if (!features.getAnalytics().isEnabled()) {
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+                    "Модуль аналітики тимчасово вимкнено");
+        }
+        if (features.getAnalytics().isPremiumOnly() && user.getAccountType() != AccountType.PREMIUM) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                     "Статистика доступна лише для користувачів з акаунтом PREMIUM");
         }
@@ -155,6 +178,30 @@ public class AdvertisementService {
                 .build();
     }
 
+    public Map<String, Object> contactSeller(Long adId, String buyerName, String buyerPhone, String message) {
+        Advertisement ad = requireAd(adId);
+        User seller = ad.getSeller();
+
+        String text = (message != null && !message.isBlank())
+                ? message
+                : "Запит на огляд автомобіля та тест-драйв";
+
+        log.info("[CONTACT REQUEST] Ad #{} ({} {} {}): buyer='{}', phone='{}', sellerEmail='{}', msg='{}'",
+                ad.getId(), ad.getBrand().getName(), ad.getModel().getName(), ad.getYear(),
+                buyerName, buyerPhone, seller.getEmail(), text);
+
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("status", "SENT");
+        response.put("advertisementId", ad.getId());
+        response.put("car", ad.getBrand().getName() + " " + ad.getModel().getName() + " (" + ad.getYear() + ")");
+        response.put("sellerName", seller.getFullName());
+        response.put("sellerEmail", seller.getEmail());
+        response.put("buyerName", buyerName);
+        response.put("buyerPhone", buyerPhone);
+        response.put("message", text);
+        return response;
+    }
+
     @Transactional
     public void delete(User actor, Long adId) {
         Advertisement ad = requireAd(adId);
@@ -179,19 +226,5 @@ public class AdvertisementService {
     private Advertisement requireAd(Long id) {
         return adRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Оголошення не знайдено"));
-    }
-
-    private String saveImage(MultipartFile file) throws IOException {
-        String original = file.getOriginalFilename();
-        String ext = (original != null && original.contains("."))
-                ? original.substring(original.lastIndexOf('.')).toLowerCase() : "";
-        if (!List.of(".jpg", ".jpeg", ".png", ".webp").contains(ext)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Підтримуються лише jpg, jpeg, png, webp");
-        }
-        Path root = Paths.get(uploadDir).toAbsolutePath().normalize();
-        Files.createDirectories(root);
-        String filename = UUID.randomUUID() + ext;
-        Files.copy(file.getInputStream(), root.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
-        return "/uploads/" + filename;
     }
 }

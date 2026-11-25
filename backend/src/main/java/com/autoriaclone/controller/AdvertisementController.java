@@ -8,11 +8,13 @@ import com.autoriaclone.security.CustomUserDetails;
 import com.autoriaclone.service.AdvertisementService;
 import com.autoriaclone.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -82,5 +84,17 @@ public class AdvertisementController {
     @PreAuthorize("hasAuthority('AD_VIEW_ANALYTICS')")
     public AdStatsResponse getStats(@AuthenticationPrincipal CustomUserDetails principal, @PathVariable Long id) {
         return adService.getStatistics(principal.getUser(), id);
+    }
+
+    @PostMapping("/ads/{id}/contact")
+    public Map<String, Object> contactSeller(@PathVariable Long id,
+                                             @RequestBody Map<String, String> payload) {
+        String buyerName = payload.getOrDefault("name", "Покупець");
+        String buyerPhone = payload.get("phone");
+        if (buyerPhone == null || buyerPhone.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Вкажіть номер телефону для зв'язку");
+        }
+        String message = payload.get("message");
+        return adService.contactSeller(id, buyerName, buyerPhone, message);
     }
 }

@@ -1,1 +1,686 @@
-*{box-sizing:border-box}body{margin:0;background:#f3f5f7;color:#17212b;font:16px Arial}header{background:#087f5b;color:white;padding:28px calc((100% - 1100px)/2)}main{max-width:1100px;margin:24px auto;display:grid;grid-template-columns:2fr 1fr;gap:18px}.panel{background:white;border-radius:12px;padding:20px;box-shadow:0 3px 14px #0001}.panel:first-child{grid-row:span 2}input,select,textarea,button{width:100%;margin:6px 0;padding:11px;border:1px solid #ccd3d8;border-radius:7px}textarea{min-height:90px}button{background:#087f5b;color:white;border:0;cursor:pointer}.ad{border-bottom:1px solid #e6eaed;padding:14px 0}.ad img{width:150px;height:100px;object-fit:cover;border-radius:8px;float:right}@media(max-width:750px){main{display:block;margin:10px}.panel{margin:12px 0}header{padding:20px}}
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #ffffff;
+    color: #17212b;
+    font: 15px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.ria-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+/* Верхня навігаційна панель */
+.ria-navbar {
+    background: #ffffff;
+    border-bottom: 1px solid #e5e9ef;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.nav-inner {
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.brand-logo {
+    display: inline-flex;
+    text-decoration: none;
+    font-size: 22px;
+    font-weight: 900;
+    border-radius: 6px;
+    overflow: hidden;
+    letter-spacing: -0.5px;
+}
+
+.logo-auto {
+    background: #db5c4c;
+    color: #ffffff;
+    padding: 4px 9px;
+}
+
+.logo-ria {
+    background: #256799;
+    color: #ffffff;
+    padding: 4px 9px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #17212b;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.nav-links a:hover {
+    color: #db5c4c;
+}
+
+.nav-rates {
+    font-size: 12.5px;
+    color: #475569;
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-badge {
+    font-size: 13px;
+    font-weight: 600;
+    color: #087f5b;
+    background: #ecfdf5;
+    padding: 6px 12px;
+    border-radius: 999px;
+}
+
+.btn-outline {
+    width: auto;
+    margin: 0;
+    padding: 8px 16px;
+    background: #ffffff;
+    color: #17212b;
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-outline:hover {
+    border-color: #17212b;
+    background: #f8fafc;
+}
+
+.btn-sell {
+    width: auto;
+    margin: 0;
+    padding: 9px 18px;
+    background: #ffffff;
+    color: #17212b;
+    border: 1.5px solid #17212b;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-sell:hover {
+    background: #17212b;
+    color: #ffffff;
+}
+
+/* Блок пошуку "Знаємо, бо перевірили" */
+.search-hero {
+    background: #e6eff6;
+    padding: 28px 0 34px;
+}
+
+.search-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px 28px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+}
+
+.search-card h1 {
+    margin: 0 0 16px;
+    font-size: 26px;
+    font-weight: 800;
+    color: #17212b;
+}
+
+.condition-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.cond-tab {
+    width: auto;
+    margin: 0;
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: 1px solid #d1d9e0;
+    background: #ffffff;
+    color: #17212b;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.cond-tab.active {
+    background: #17212b;
+    color: #ffffff;
+    border-color: #17212b;
+}
+
+.search-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    margin: 0;
+    padding: 11px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #ffffff;
+    color: #17212b;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #256799;
+    box-shadow: 0 0 0 3px rgba(37, 103, 153, 0.12);
+}
+
+.search-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.btn-search-red {
+    width: auto;
+    min-width: 210px;
+    margin: 0;
+    padding: 12px 24px;
+    background: #db5c4c;
+    color: #ffffff;
+    border: 0;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-search-red:hover {
+    background: #c84b3b;
+}
+
+.btn-reset {
+    width: auto;
+    margin: 0;
+    padding: 11px 20px;
+    background: #ffffff;
+    color: #17212b;
+    border: 1px solid #17212b;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-reset:hover {
+    background: #f1f5f9;
+}
+
+/* Швидкопошук */
+.quick-search {
+    margin-top: 24px;
+}
+
+.quick-search h3 {
+    margin: 0 0 12px;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.quick-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.q-pill {
+    width: auto;
+    margin: 0;
+    padding: 8px 16px;
+    background: #ffffff;
+    color: #17212b;
+    border: 1px solid #17212b;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.q-pill:hover {
+    background: #f8fafc;
+}
+
+.q-badge {
+    background: #db5c4c;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+}
+
+/* Секція оголошень */
+.catalog-section {
+    padding-top: 28px;
+    padding-bottom: 48px;
+}
+
+.feed-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.feed-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.feed-title-wrap h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.ai-pill {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+}
+
+.btn-refresh {
+    width: auto;
+    margin: 0;
+    padding: 8px 16px;
+    background: #f1f5f9;
+    color: #17212b;
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-refresh:hover {
+    background: #e2e8f0;
+}
+
+/* Сітка 3 картки в ряд */
+#ads {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.ria-card {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e5e9ef;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.ria-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.09);
+}
+
+.ria-photo-box {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+    overflow: hidden;
+}
+
+.ria-photo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.ria-no-photo {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #475569;
+    font-weight: 700;
+    font-size: 17px;
+    gap: 4px;
+}
+
+.ria-no-photo span {
+    font-size: 12px;
+    font-weight: 500;
+    color: #64748b;
+}
+
+.ria-watermark {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 11px;
+    font-weight: 800;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.ria-watermark .w-auto {
+    background: #db5c4c;
+    color: #fff;
+    padding: 2px 6px;
+}
+
+.ria-watermark .w-ria {
+    background: #256799;
+    color: #fff;
+    padding: 2px 6px;
+}
+
+.ria-photo-bottom {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.ria-badges-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.ria-vin-badge {
+    background: rgba(24, 32, 42, 0.88);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.ria-vin-badge.warn {
+    background: rgba(180, 83, 9, 0.92);
+}
+
+.ria-plate {
+    display: inline-flex;
+    align-items: stretch;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 11px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.ria-plate-ua {
+    background: #1d63b8;
+    color: #ffffff;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 3px;
+    display: flex;
+    align-items: flex-end;
+}
+
+.ria-plate-num {
+    padding: 2px 6px;
+}
+
+.ria-fav-btn {
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+}
+
+.ria-fav-btn.liked {
+    color: #db5c4c;
+}
+
+.ria-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.ria-title {
+    margin: 0 0 6px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #17212b;
+}
+
+.ria-price-row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.ria-price-usd {
+    font-size: 20px;
+    font-weight: 800;
+    color: #3c9806;
+}
+
+.ria-price-sep {
+    color: #94a3b8;
+    font-weight: 700;
+}
+
+.ria-price-uah {
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.ria-price-eur {
+    font-size: 12.5px;
+    color: #64748b;
+}
+
+.ria-specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 10px;
+    font-size: 13px;
+    color: #334155;
+    margin-bottom: 10px;
+}
+
+.ria-spec-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ria-desc-line {
+    font-size: 13px;
+    color: #64748b;
+    margin: 2px 0 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.ria-time {
+    margin-top: auto;
+    font-size: 12px;
+    color: #8c96a0;
+}
+
+/* Модальні вікна */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 100;
+}
+
+.modal-box {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 26px;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.22);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-box h2 {
+    margin: 0 0 8px;
+    font-size: 20px;
+}
+
+.modal-box button:not(.modal-close):not(.btn-search-red) {
+    width: 100%;
+    padding: 11px;
+    background: #256799;
+    color: #ffffff;
+    border: 0;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.modal-box .btn-search-red {
+    width: 100%;
+}
+
+.modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.two-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.modal-switch {
+    margin: 6px 0 0;
+    text-align: center;
+    font-size: 14px;
+}
+
+.modal-switch a {
+    color: #256799;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.form-msg {
+    margin: 4px 0 0;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #db5c4c;
+    text-align: center;
+}
+.logo-clone {
+    background: #17212b;
+    color: #ffffff;
+    padding: 4px 8px;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+}
+
+

@@ -37,10 +37,12 @@ public class SecurityConfig {
                                 "/app.js",
                                 "/favicon.ico",
                                 "/api/auth/**",
+                                "/api/system/features",
                                 "/actuator/health",
                                 "/uploads/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/ads/**", "/api/brands/**", "/api/rates/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/ads/*/contact").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
